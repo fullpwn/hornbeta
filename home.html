@@ -1,41 +1,69 @@
-<h3 id="greet"></h3>
-<ul id="posts"></ul>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My Mastodon App</title>
+  <style>
+    .media {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h3 id="greet"></h3>
+  <div id="statuses"></div>
+  <script>
+    let searchParams = new URLSearchParams(window.location.search)
+    searchParams.has('token') 
+    searchParams.has('inst') 
+    let token = searchParams.get('token')
+    let inst = searchParams.get('inst')
 
-<script>
-  let searchParams = new URLSearchParams(window.location.search);
-  let token = searchParams.get("token");
-  let inst = searchParams.get("inst");
+    fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!"
+    })
 
-  fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
-    headers: {
-      Authorization: "Bearer " + token,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    method: "GET",
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      document.getElementById(
-        "greet"
-      ).innerHTML = `Welcome ${data.display_name}!`;
-    });
-
-  fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
-    headers: {
-      Authorization: "Bearer " + token,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    method: "GET",
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      let posts = document.getElementById("posts");
-      data.slice(0, 39).forEach((post) => {
-        let li = document.createElement("li");
-        li.innerHTML = `<strong>${post.account.display_name}</strong>: ${post.content}`;
-        posts.appendChild(li);
-      });
-    });
-</script>
+    fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      let statusesDiv = document.getElementById("statuses")
+      for (let i = 0; i < 39 && i < data.length; i++) {
+        let status = data[i]
+        let statusDiv = document.createElement("div")
+        statusDiv.innerHTML = "<h4>" + status.account.display_name + "</h4>" + status.content
+        if (status.media_attachments.length > 0) {
+          let mediaHtml = ""
+          for (let j = 0; j < Math.min(4, status.media_attachments.length); j++) {
+            let media = status.media_attachments[j]
+            if (media.type.startsWith("image")) {
+              let mediaUrl = media.url
+              mediaHtml += "<a href=\"" + mediaUrl + "\" target=\"_blank\"><img class=\"media\" src=\"" + mediaUrl + "\" style=\"max-width: 15%; height: auto;\"/></a>"
+            } else if (media.type.startsWith("video")) {
+              let mediaUrl = media.url
+              mediaHtml += "<video class=\"media\" src=\"" + mediaUrl + "\" controls style=\"max-width: 15%; height: auto;\"></video>"
+            }
+          }
+          statusDiv.innerHTML += mediaHtml
+        }
+        statusesDiv.appendChild(statusDiv)
+      }
+    })
+  </script>
+</body>
+</html>
