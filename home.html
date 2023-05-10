@@ -21,8 +21,7 @@
       ).innerHTML = `Welcome ${data.display_name}!`;
     });
 
-  fetch("https://" + inst + "/api/v1/timelines/home", {
-    body: "limit=40",
+  fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
     headers: {
       Authorization: "Bearer " + token,
       "Content-Type": "application/x-www-form-urlencoded",
