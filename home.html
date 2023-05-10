@@ -16,4 +16,13 @@ fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
     console.log(data)
     document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!"
   })
+  fetch("https://" + inst + "/api/v1/timelines/public", {
+  headers: {
+    Authorization: "Bearer " + token,
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  method: "GET"
+}).then(response => response.json()).then(data => {
+    console.log(data)
+  })
 </script>
