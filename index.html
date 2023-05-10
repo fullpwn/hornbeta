@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="styles.css">
+<p>Instance <input id="instance" type="text"></p>
+
+<p>Email <input id="email" type="email"></p>
+<p>Password <input id="password" type="password"></p>
+<button onclick="toot()">Login</button>
+<p id="estatus"></p>
+
+<script>
+function toot() {
+var instance = document.getElementById("instance").value
+var email = document.getElementById("email").value
+var password = document.getElementById("password").value
+document.getElementById("estatus").innerHTML = "Logging in.."
+fetch("https://" + instance + "/oauth/token", {
+  body: "client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&client_secret=zhEDkkMKQt0lOeOE_mpxOj6dJJDksMg2XPSi-s9ZKWs&grant_type=password&username=" + email + "&password=" + password + "&scope=read+write+push",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  method: "POST"
+}).then(response => response.json()).then(data => {
+    if (data.access_token.length === 43) {
+      window.location.replace("home?inst=" + instance + "&token=" + data.access_token);
+
+    }
+    else {
+      document.getElementById("estatus").innerHTML = "not"
+    }
+  })
+}
+</script>
