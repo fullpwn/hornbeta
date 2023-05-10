@@ -7,7 +7,6 @@
   let inst = searchParams.get("inst");
 
   fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
-    body: "limit=40",
     headers: {
       Authorization: "Bearer " + token,
       "Content-Type": "application/x-www-form-urlencoded",
@@ -23,6 +22,7 @@
     });
 
   fetch("https://" + inst + "/api/v1/timelines/home", {
+    body: "limit=40",
     headers: {
       Authorization: "Bearer " + token,
       "Content-Type": "application/x-www-form-urlencoded",
