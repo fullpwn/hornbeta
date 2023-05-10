@@ -32,7 +32,7 @@
     .then((data) => {
       console.log(data);
       let posts = document.getElementById("posts");
-      data.slice(0, 6).forEach((post) => {
+      data.slice(0, 19).forEach((post) => {
         let li = document.createElement("li");
         li.innerHTML = `<strong>${post.account.display_name}</strong>: ${post.content}`;
         posts.appendChild(li);
