@@ -1,29 +1,49 @@
-<h3 id="greet"></h3>
-<script>
+<html>
+<head>
+  <title>Horn</title>
+</head>
+<body>
+  <h3 id="greet"></h3>
+  <ul id="statuses"></ul>
+  <script>
+    let searchParams = new URLSearchParams(window.location.search);
+    searchParams.has('token');
+    searchParams.has('inst');
+    let token = searchParams.get('token');
+    let inst = searchParams.get('inst');
 
-    let searchParams = new URLSearchParams(window.location.search)
-searchParams.has('token') 
-searchParams.has('inst') 
-let token = searchParams.get('token')
-let inst = searchParams.get('inst')
-fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
-  headers: {
-    Authorization: "Bearer " + token,
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  method: "GET"
-}).then(response => response.json()).then(data => {
-    console.log(data)
-    document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!"
-  })
-  fetch("https://" + inst + "/api/v1/timelines/public", {
-  headers: {
-    Authorization: "Bearer " + token,
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  method: "GET"
-}).then(response => response.json()).then(data => {
-    console.log(data)
-    console.log(data.account.display_name)
-  })
-</script>
+    fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      method: "GET"
+    }).then(response => response.json()).then(data => {
+      console.log(data);
+      document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!";
+    });
+
+    fetch("https://" + inst + "/api/v1/timelines/public", {
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      method: "GET"
+    }).then(response => response.json()).then(data => {
+      console.log(data);
+      let statuses = document.getElementById("statuses");
+      for (let i = 0; i < 6; i++) {
+        let status = data[i];
+        let li = document.createElement("li");
+        let display_name = document.createTextNode(status.account.display_name);
+        let content = document.createTextNode(status.content);
+        li.appendChild(display_name);
+        li.appendChild(document.createElement("br"));
+        li.appendChild(content);
+        li.appendChild(document.createElement("br"));
+        statuses.appendChild(li);
+      }
+    });
+  </script>
+</body>
+</html>
