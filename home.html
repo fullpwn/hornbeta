@@ -4,70 +4,90 @@
   <meta charset="UTF-8">
   <title>Horn</title>
   <style>
-    .media {
-      margin-right: 5px;
-    }
     body {
-      background-color: #fcebd5;
-      font-family: Baskerville,Baskerville Old Face,Hoefler Text,Garamond,Times New Roman,serif; 
+      background-color: #282c37;
+      color: white;
+    }
+    .media {
+      display: inline-block;
+      width: 15%;
+      margin: 5px;
+    }
+    .media img, .media video {
+      max-width: 100%;
+      max-height: 100%;
+      cursor: pointer;
+    }
+    .status {
+      background-color: #525a70;
+      border-radius: 15px;
+      padding: 10px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <h3 id="greet"></h3>
-  <div id="statuses"></div>
+  <h3 id="greet">Logging you in.</h3>
+  <div id="statuses">Loading feed.</div>
   <script>
-    let searchParams = new URLSearchParams(window.location.search)
-    searchParams.has('token') 
-    searchParams.has('inst') 
-    let token = searchParams.get('token')
-    let inst = searchParams.get('inst')
+  let searchParams = new URLSearchParams(window.location.search)
+  searchParams.has('token') 
+  searchParams.has('inst') 
+  let token = searchParams.get('token')
+  let inst = searchParams.get('inst')
+  
+window.history.replaceState({}, document.title, window.location.pathname);
+  
 
-    fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      method: "GET"
+  fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    method: "GET"
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data)
+    document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!"
+  }).catch((error) => {
+  window.location.replace("/")
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!"
-    })
-
-    fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      method: "GET"
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      let statusesDiv = document.getElementById("statuses")
-      for (let i = 0; i < 39 && i < data.length; i++) {
-        let status = data[i]
+  fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    method: "GET"
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data)
+    document.getElementById("statuses").innerHTML = ""
+    let statusesDiv = document.getElementById("statuses")
+    for (let i = 0; i < 39 && i < data.length; i++) {
+      let status = data[i]
         let statusDiv = document.createElement("div")
+        statusDiv.className = "status"
         statusDiv.innerHTML = "<h4>" + status.account.display_name + "</h4>" + status.content
         if (status.media_attachments.length > 0) {
-          let mediaHtml = ""
+          let mediaDiv = document.createElement("div")
+          mediaDiv.className = "media"
           for (let j = 0; j < Math.min(4, status.media_attachments.length); j++) {
             let media = status.media_attachments[j]
             if (media.type.startsWith("image")) {
-              let mediaUrl = media.url
-              mediaHtml += "<a href=\"" + mediaUrl + "\" target=\"_blank\"><img class=\"media\" src=\"" + mediaUrl + "\" style=\"max-width: 15%; height: auto;\"/></a>"
+              let mediaHtml = "<img src=\"" + media.url + "\"/>"
+              let mediaLink = "<a href=\"" + media.url + "\" target=\"_blank\">" + mediaHtml + "</a>"
+              mediaDiv.innerHTML += mediaLink
             } else if (media.type.startsWith("video")) {
-              let mediaUrl = media.url
-              mediaHtml += "<video class=\"media\" src=\"" + mediaUrl + "\" controls style=\"max-width: 15%; height: auto;\"></video>"
+              let mediaHtml = "<video src=\"" + media.url + "\" controls></video>"
+              let mediaLink = "<a href=\"" + media.url + "\" target=\"_blank\">" + mediaHtml + "</a>"
+              mediaDiv.innerHTML += mediaLink
             }
           }
-          statusDiv.innerHTML += mediaHtml
+          statusDiv.appendChild(mediaDiv)
         }
         statusesDiv.appendChild(statusDiv)
       }
     })
   </script>
-</body>
-</html>
