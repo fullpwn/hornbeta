@@ -90,7 +90,7 @@ color: grey;
           for (let j = 0; j < Math.min(4, status.media_attachments.length); j++) {
             let media = status.media_attachments[j]
             if (media.type.startsWith("image")) {
-              let mediaHtml = "<img src=\"" + media.url + "\"/>"
+              let mediaHtml = "<img src=\"" + media.preview_url + "\"/>"
               let mediaLink = "<a href=\"" + media.url + "\" target=\"_blank\">" + mediaHtml + "</a>"
               mediaDiv.innerHTML += mediaLink
             } else if (media.type.startsWith("video")) {
