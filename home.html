@@ -51,7 +51,7 @@ color: grey;
   searchParams.has('inst') 
   let token = searchParams.get('token')
   let inst = searchParams.get('inst')
-  window.history.replaceState({}, document.title, window.location.pathname);
+  window.history.replaceState({}, document.title, "/");
 
   fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
     headers: {
