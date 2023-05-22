@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
   <title>Horn</title>
   <style>
@@ -24,6 +28,21 @@
       padding: 10px;
       margin-bottom: 10px;
     }
+    .favstar {
+    color: white;
+  }
+    .favcount {
+    display: flex;
+}
+h4 {
+font-family: 'Poppins', sans-serif;
+}
+p {
+font-family: 'Poppins', sans-serif;
+}
+a {
+color: grey;
+}
   </style>
 </head>
 <body>
@@ -35,8 +54,8 @@
   searchParams.has('inst') 
   let token = searchParams.get('token')
   let inst = searchParams.get('inst')
-  
-window.history.replaceState({}, document.title, window.location.pathname);
+  window.history.replaceState({}, document.title, window.location.pathname);
+
   fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
     headers: {
       Authorization: "Bearer " + token,
@@ -88,7 +107,7 @@ window.history.replaceState({}, document.title, window.location.pathname);
         }
           let favDiv = document.createElement("div")
           favDiv.className = "favcount"
-          favDiv.innerHTML = "<img src = 'star_rate_FILL0_wght200_GRAD200_opsz40.svg' alt='Like Count'/>" + "<p>" + status.favourites_count + "</p>"
+          favDiv.innerHTML = "<img src='star_rate_FILL0_wght200_GRAD200_opsz40.svg' class='favstar' alt='Like Count'/>" + "<p>" + status.favourites_count + "</p>"
           statusDiv.appendChild(favDiv)
         statusesDiv.appendChild(statusDiv)
       }
