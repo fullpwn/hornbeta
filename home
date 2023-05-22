@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Horn</title>
+  <style>
+    body {
+      background-color: #282c37;
+      color: white;
+    }
+    .media {
+      display: inline-block;
+      width: 15%;
+      margin: 5px;
+    }
+    .media img, .media video {
+      max-width: 100%;
+      max-height: 100%;
+      cursor: pointer;
+    }
+    .status {
+      background-color: #525a70;
+      border-radius: 15px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h3 id="greet">Logging you in.</h3>
+  <div id="statuses">Loading feed.</div>
+  <script>
+  let searchParams = new URLSearchParams(window.location.search)
+  searchParams.has('token') 
+  searchParams.has('inst') 
+  let token = searchParams.get('token')
+  let inst = searchParams.get('inst')
+  
+window.history.replaceState({}, document.title, window.location.pathname);
+  fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    method: "GET"
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data)
+    document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!"
+  }).catch((error) => {
+  window.location.replace("/")
+    })
+  fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    method: "GET"
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data)
+    document.getElementById("statuses").innerHTML = ""
+    let statusesDiv = document.getElementById("statuses")
+    for (let i = 0; i < 39 && i < data.length; i++) {
+      let status = data[i]
+        let statusDiv = document.createElement("div")
+        statusDiv.className = "status"
+        statusDiv.innerHTML = "<h4>" + status.account.acct + "</h4>" + status.content
+        if (status.media_attachments.length > 0) {
+          let mediaDiv = document.createElement("div")
+          mediaDiv.className = "media"
+          for (let j = 0; j < Math.min(4, status.media_attachments.length); j++) {
+            let media = status.media_attachments[j]
+            if (media.type.startsWith("image")) {
+              let mediaHtml = "<img src=\"" + media.url + "\"/>"
+              let mediaLink = "<a href=\"" + media.url + "\" target=\"_blank\">" + mediaHtml + "</a>"
+              mediaDiv.innerHTML += mediaLink
+            } else if (media.type.startsWith("video")) {
+              let mediaHtml = "<video src=\"" + media.url + "\" controls></video>"
+              let mediaLink = "<a href=\"" + media.url + "\" target=\"_blank\">" + mediaHtml + "</a>"
+              mediaDiv.innerHTML += mediaLink
+            }
+          }
+          statusDiv.appendChild(mediaDiv)
+
+        }
+          let favDiv = document.createElement("div")
+          favDiv.className = "favcount"
+          favDiv.innerHTML = "<img src = 'star_rate_FILL0_wght200_GRAD200_opsz40.svg' alt='Like Count'/>" + "<p>" + status.favourites_count + "</p>"
+          statusDiv.appendChild(favDiv)
+        statusesDiv.appendChild(statusDiv)
+      }
+    })
+  </script>
