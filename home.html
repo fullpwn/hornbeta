@@ -83,7 +83,7 @@ color: grey;
       let status = data[i]
         let statusDiv = document.createElement("div")
         statusDiv.className = "status"
-        statusDiv.innerHTML = "<h4>" + status.account.acct + "</h4>" + status.content
+        statusDiv.innerHTML = "<h4>" + status.account.display_name + "  " + "(" + status.account.acct + ")" + "</h4>" + status.content
         if (status.media_attachments.length > 0) {
           let mediaDiv = document.createElement("div")
           mediaDiv.className = "media"
