@@ -37,8 +37,6 @@
   let inst = searchParams.get('inst')
   
 window.history.replaceState({}, document.title, window.location.pathname);
-  
-
   fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
     headers: {
       Authorization: "Bearer " + token,
@@ -69,7 +67,7 @@ window.history.replaceState({}, document.title, window.location.pathname);
       let status = data[i]
         let statusDiv = document.createElement("div")
         statusDiv.className = "status"
-        statusDiv.innerHTML = "<h4>" + status.account.display_name + "</h4>" + status.content
+        statusDiv.innerHTML = "<h4>" + status.account.acct + "</h4>" + status.content
         if (status.media_attachments.length > 0) {
           let mediaDiv = document.createElement("div")
           mediaDiv.className = "media"
@@ -86,7 +84,12 @@ window.history.replaceState({}, document.title, window.location.pathname);
             }
           }
           statusDiv.appendChild(mediaDiv)
+
         }
+          let favDiv = document.createElement("div")
+          favDiv.className = "favcount"
+          favDiv.innerHTML = "<img src = 'star_rate_FILL0_wght200_GRAD200_opsz40.svg' alt='Like Count'/>" + "<p>" + status.favourites_count + "</p>"
+          statusDiv.appendChild(favDiv)
         statusesDiv.appendChild(statusDiv)
       }
     })
