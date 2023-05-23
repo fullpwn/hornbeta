@@ -1,18 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap" rel="stylesheet">
- <title>Horn</title>
-  <style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+<title>Horn Login</title>
+<style>
     body {
       background-color: #282c37;
       color: white;
+      text-align: center;
     }
     .media {
       display: inline-block;
@@ -39,132 +34,54 @@
 body {
 font-family: 'Poppins', sans-serif;
 }
-a {
-color: #595aff;
-}
-.refresh {
+button {
 background-color: #595aff;
 color: white;
 border: none;
 border-radius: 5px;
-float: right;
 }
-  </style>
-</head>
-<body>
-    <button class="refresh" onClick="toot()">Refresh feed</button>
-    <h3 id="greet">Logging you in.</h3>
-    
-    <div id="statuses">Loading feed.</div>
-    <script>
-    let searchParams = new URLSearchParams(window.location.search)
-    searchParams.has('token') 
-    searchParams.has('inst') 
-    let token = searchParams.get('token')
-    let inst = searchParams.get('inst')
-    window.history.replaceState({}, document.title, window.location.pathname);
-  
-    fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      method: "GET"
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!"
-    }).catch((error) => {
-    window.location.replace("/")
-      })
-    fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      method: "GET"
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      document.getElementById("statuses").innerHTML = ""
-      let statusesDiv = document.getElementById("statuses")
-      for (let i = 0; i < 39 && i < data.length; i++) {
-        let status = data[i]
-          let statusDiv = document.createElement("div")
-          statusDiv.className = "status"
-          statusDiv.innerHTML = "<h4>" + status.account.display_name + "  " + "(" + status.account.acct + ")" + "</h4>" + status.content
-          if (status.media_attachments.length > 0) {
-            let mediaDiv = document.createElement("div")
-            mediaDiv.className = "media"
-            for (let j = 0; j < Math.min(4, status.media_attachments.length); j++) {
-              let media = status.media_attachments[j]
-              if (media.type.startsWith("image")) {
-                let mediaHtml = "<img src=\"" + media.preview_url + "\"/>"
-                let mediaLink = "<a href=\"" + media.url + "\" target=\"_blank\">" + mediaHtml + "</a>"
-                mediaDiv.innerHTML += mediaLink
-              } else if (media.type.startsWith("video")) {
-                let mediaHtml = "<video src=\"" + media.url + "\" controls></video>"
-                let mediaLink = "<a href=\"" + media.url + "\" target=\"_blank\">" + mediaHtml + "</a>"
-                mediaDiv.innerHTML += mediaLink
-              }
-            }
-            statusDiv.appendChild(mediaDiv)
-  
-          }
-            let favDiv = document.createElement("div")
-            favDiv.className = "favcount"
-            favDiv.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' height='40' viewBox='0 96 960 960' width='40'><path d='m352 811 128-76 129 76-34-144 111-95-147-13-59-137-59 137-147 13 112 95-34 144Zm128 8-164 98q-11 6-21.5 5t-18.5-7q-8-6-12-16.5t-1-21.5l43-183-145-123q-9-8-11-18.5t1-20.5q3-10 11-16.5t20-7.5l190-17 75-174q5-11 14-16.5t19-5.5q10 0 19 5.5t14 16.5l75 175 190 16q12 1 20 8t11 17q3 10 .5 20T798 571L654 694l43 183q3 11-1 21.5T684 915q-8 6-18.5 7t-21.5-5l-164-98Zm0-192Z'/></svg>" + "<p>" + status.favourites_count + "</p>" + "</p>" + "<svg xmlns='http://www.w3.org/2000/svg' height='40' viewBox='0 96 960 960' width='40'><path d='M306 527q13-26 27-51.5t31-49.5l-52-10-80 80 74 31Zm475-268q-69 3-145.5 41.5T496 402q-42 42-74.195 88.957Q389.61 537.913 374 579l109 109q41.087-15.61 88.043-47.805Q618 608 660 566q63-63 101.5-139.5T803 281q0-5-1.5-9t-4.5-7q-3-3-7-4.5t-9-1.5ZM564 498q-25-25-25-59.5t25-59.5q25-25 59.5-25t59.5 25q25 25 25 59.5T683 498q-25 25-59.5 25T564 498Zm-29 257 31 74 80-80-10-51q-24 17-49.5 30.5T535 755Zm349-531q8 109.31-36.5 213.155T709 635.021L729 733q5 21-1.462 41.096Q721.077 794.192 706 809L582 932q-16 16-37.5 11.5T514 919l-62-143-167-167-142-61q-20-9-25-30.5t11-37.5l124-124q14.528-15.077 34.764-21.538Q308 328 329 333l97.469 20Q520 259 623.845 214.5T837 178q8.667 1.125 17.333 5.062Q863 187 869 193t10 14q4 8 5 17ZM157 735q35-35 85.5-35.5T328 734q35 35 34.5 85.5T327 905q-26 26-81 43T82 980q15-109 32-164t43-81Zm60 59q-10 10-18.5 31.5T185 876q29-5 51-13.5t32-18.5q11-11 11.5-25.5t-10.259-25.457q-10.758-11.043-26-10.543Q228 783 217 794Z'/></svg>" + "<p>" + status.reblogs_count + "</p>" + "<svg xmlns='http://www.w3.org/2000/svg' height='40' viewBox='0 96 960 960' width='40'><path d='M80 875V260q0-34.65 24.675-59.325Q129.35 176 164 176h632q34.65 0 59.325 24.675Q880 225.35 880 260v472q0 34.65-24.675 59.325Q830.65 816 796 816H240l-88 88q-20 20-46 9.281T80 875Zm84-102 41-41h591V260H164v513Zm0-513v513-513Z'/></svg>" + "<p>" + "<p>" + status.replies_count + "</p>"  
-            statusDiv.appendChild(favDiv)
-          statusesDiv.appendChild(statusDiv)
-        }
-      })
-        
-   function toot() {
-        fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      method: "GET"
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      document.getElementById("statuses").innerHTML = ""
-      let statusesDiv = document.getElementById("statuses")
-      for (let i = 0; i < 39 && i < data.length; i++) {
-        let status = data[i]
-          let statusDiv = document.createElement("div")
-          statusDiv.className = "status"
-          statusDiv.innerHTML = "<h4>" + status.account.display_name + "  " + "(" + status.account.acct + ")" + "</h4>" + status.content
-          if (status.media_attachments.length > 0) {
-            let mediaDiv = document.createElement("div")
-            mediaDiv.className = "media"
-            for (let j = 0; j < Math.min(4, status.media_attachments.length); j++) {
-              let media = status.media_attachments[j]
-              if (media.type.startsWith("image")) {
-                let mediaHtml = "<img src=\"" + media.preview_url + "\"/>"
-                let mediaLink = "<a href=\"" + media.url + "\" target=\"_blank\">" + mediaHtml + "</a>"
-                mediaDiv.innerHTML += mediaLink
-              } else if (media.type.startsWith("video")) {
-                let mediaHtml = "<video src=\"" + media.url + "\" controls></video>"
-                let mediaLink = "<a href=\"" + media.url + "\" target=\"_blank\">" + mediaHtml + "</a>"
-                mediaDiv.innerHTML += mediaLink
-              }
-            }
-            statusDiv.appendChild(mediaDiv)
-  
-          }
-            let favDiv = document.createElement("div")
-            favDiv.className = "favcount"
-            favDiv.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' height='40' viewBox='0 96 960 960' width='40'><path d='m352 811 128-76 129 76-34-144 111-95-147-13-59-137-59 137-147 13 112 95-34 144Zm128 8-164 98q-11 6-21.5 5t-18.5-7q-8-6-12-16.5t-1-21.5l43-183-145-123q-9-8-11-18.5t1-20.5q3-10 11-16.5t20-7.5l190-17 75-174q5-11 14-16.5t19-5.5q10 0 19 5.5t14 16.5l75 175 190 16q12 1 20 8t11 17q3 10 .5 20T798 571L654 694l43 183q3 11-1 21.5T684 915q-8 6-18.5 7t-21.5-5l-164-98Zm0-192Z'/></svg>" + "<p>" + status.favourites_count + "</p>" + "</p>" + "<svg xmlns='http://www.w3.org/2000/svg' height='40' viewBox='0 96 960 960' width='40'><path d='M306 527q13-26 27-51.5t31-49.5l-52-10-80 80 74 31Zm475-268q-69 3-145.5 41.5T496 402q-42 42-74.195 88.957Q389.61 537.913 374 579l109 109q41.087-15.61 88.043-47.805Q618 608 660 566q63-63 101.5-139.5T803 281q0-5-1.5-9t-4.5-7q-3-3-7-4.5t-9-1.5ZM564 498q-25-25-25-59.5t25-59.5q25-25 59.5-25t59.5 25q25 25 25 59.5T683 498q-25 25-59.5 25T564 498Zm-29 257 31 74 80-80-10-51q-24 17-49.5 30.5T535 755Zm349-531q8 109.31-36.5 213.155T709 635.021L729 733q5 21-1.462 41.096Q721.077 794.192 706 809L582 932q-16 16-37.5 11.5T514 919l-62-143-167-167-142-61q-20-9-25-30.5t11-37.5l124-124q14.528-15.077 34.764-21.538Q308 328 329 333l97.469 20Q520 259 623.845 214.5T837 178q8.667 1.125 17.333 5.062Q863 187 869 193t10 14q4 8 5 17ZM157 735q35-35 85.5-35.5T328 734q35 35 34.5 85.5T327 905q-26 26-81 43T82 980q15-109 32-164t43-81Zm60 59q-10 10-18.5 31.5T185 876q29-5 51-13.5t32-18.5q11-11 11.5-25.5t-10.259-25.457q-10.758-11.043-26-10.543Q228 783 217 794Z'/></svg>" + "<p>" + status.reblogs_count + "</p>" + "<svg xmlns='http://www.w3.org/2000/svg' height='40' viewBox='0 96 960 960' width='40'><path d='M80 875V260q0-34.65 24.675-59.325Q129.35 176 164 176h632q34.65 0 59.325 24.675Q880 225.35 880 260v472q0 34.65-24.675 59.325Q830.65 816 796 816H240l-88 88q-20 20-46 9.281T80 875Zm84-102 41-41h591V260H164v513Zm0-513v513-513Z'/></svg>" + "<p>" + "<p>" + status.replies_count + "</p>"  
-            statusDiv.appendChild(favDiv)
-          statusesDiv.appendChild(statusDiv)
-        }
-      })
+input {
+border-radius: 5px;
+border: none;
 }
-    </script>
-</body>
-</html>
+
+</style>
+
+<p>Instance <input id="instance" type="text"></p>
+
+<p>Email <input id="email" type="email"></p>
+<p>Password <input id="password" type="password"></p>
+<button onclick="toot()">Login</button>
+<p id="estatus"></p>
+
+<script>
+function toot() {
+var instance = document.getElementById("instance").value
+var email = document.getElementById("email").value
+var password = document.getElementById("password").value
+document.getElementById("estatus").innerHTML = "Logging in.."
+fetch("https://" + instance + "/oauth/token", {
+body: "client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&client_secret=zhEDkkMKQt0lOeOE_mpxOj6dJJDksMg2XPSi-s9ZKWs&grant_type=password&username=" + email + "&password=" + password + "&scope=read+write+push",
+headers: {
+"Content-Type": "application/x-www-form-urlencoded"
+},
+method: "POST"
+}).then(response => {
+response.json().then(data => {
+if (response.status === 200) {
+if (data.access_token.length === 43) {
+window.location.replace("home?inst=" + instance + "&token=" + data.access_token);
+} else {
+document.getElementById("estatus").innerHTML = "An unexpected error has occurred."
+}
+} else if (response.status === 401) {
+document.getElementById("estatus").innerHTML = "Email or password is incorrect."
+} else {
+  }
+})
+
+}).catch((error) => {
+  document.getElementById("estatus").innerHTML = "Something went wrong connecting to your instance. Please check you have a internet connection and try again."
+});;
+}
+</script>
