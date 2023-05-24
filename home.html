@@ -1,3 +1,4 @@
+
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Horn">
 <!DOCTYPE html>
@@ -30,10 +31,7 @@
       background-color: #525a70;
       border-radius: 15px;
       margin-bottom: 10px;
-    padding: 12px;
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-
+      padding: 12px;
     }
     svg {
     filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(346deg) brightness(101%) contrast(104%);
@@ -139,7 +137,7 @@ background-color: #595aff;
     let token = searchParams.get('token')
     let inst = searchParams.get('inst')
     load.removeAttribute("hidden");
-    window.history.replaceState({}, document.title, window.location.pathname);
+    //window.history.replaceState({}, document.title, window.location.pathname);
   
     fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
       headers: {
@@ -156,7 +154,7 @@ background-color: #595aff;
         document.cookie = "friendlyname=" + data.display_name;
       document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!"
     }).catch((error) => {
-    window.location.replace("/")
+    location.replace("/")
       })
     fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
       headers: {
