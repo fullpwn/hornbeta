@@ -120,9 +120,9 @@ border: none;
 </style>
 <img hidden class="avatar" src="" id="avatar"></img>
 <h1 id="greet"></h1>
-<p id="instance">Instance <input type="text"></p>
+<p id="insttext">Instance <input  id="instance" type="text"></p>
 
-<p id="email">Email <input  type="email"></p>
+<p id="mailtxt">Email <input id="email" type="email"></p>
 <p>Password <input id="password" type="password"></p>
 <button id="signon" onclick="toot()">Sign in</button>
 <p id="estatus"></p>
@@ -133,18 +133,24 @@ border: none;
 var emailinput = document.getElementById("email")
 var instanceinput = document.getElementById("instance")
 var buttonsignon = document.getElementById("signon")
+    
 var avatarpfp = document.getElementById("avatar")
+var insttext = document.getElementById("insttext")
+var mailtxt = document.getElementById("mailtxt")
   let user = getCookie("friendlyname");
   if (user != "") {
     document.getElementById("greet").innerHTML = ("Hey " + user + "!");
     emailinput.setAttribute("hidden", true);
     instanceinput.setAttribute("hidden", true);
+    insttext.setAttribute("hidden", true);
+    mailtxt.setAttribute("hidden", true);
     buttonsignon.setAttribute("onClick", "userlogin()");
-    var instance = getCookie("instance")
-      var email = getCookie("email")
-      var avatar = getCookie("avatar")
+    var instancequick = getCookie("instance")
+      var emailquick = getCookie("email")
+      var avatarquick = getCookie("avatar")
       buttonsignon.setAttribute("onClick", "userlogin()");
-      avatarpfp.setAttribute("src", avatar);
+      avatarpfp.setAttribute("src", avatarquick);
+      
       avatarpfp.removeAttribute("hidden");
   } else {
       document.getElementById("greet").innerHTML = ("Horn");
@@ -168,7 +174,7 @@ function getCookie(cname) {
     
     let load = document.getElementById('loading');
 function toot() {
-    var instance = document.getElementById("instance").value
+let instance = document.getElementById("instance").value;
     
 var email = document.getElementById("email").value
     
@@ -208,8 +214,8 @@ function userlogin() {
     var password = document.getElementById("password").value
     document.getElementById("estatus").innerHTML = ""
 load.removeAttribute("hidden");
-fetch("https://" + instance + "/oauth/token", {
-body: "client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&client_secret=zhEDkkMKQt0lOeOE_mpxOj6dJJDksMg2XPSi-s9ZKWs&grant_type=password&username=" + email + "&password=" + password + "&scope=read+write+push",
+fetch("https://" + instancequick + "/oauth/token", {
+body: "client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&client_secret=zhEDkkMKQt0lOeOE_mpxOj6dJJDksMg2XPSi-s9ZKWs&grant_type=password&username=" + emailquick + "&password=" + password + "&scope=read+write+push",
 headers: {
 "Content-Type": "application/x-www-form-urlencoded"
 },
@@ -218,7 +224,7 @@ method: "POST"
 response.json().then(data => {
 if (response.status === 200) {
 if (data.access_token.length === 43) {
-window.location.replace("home?inst=" + instance + "&token=" + data.access_token);
+window.location.replace("home?inst=" + instancequick + "&token=" + data.access_token);
 } else {
 document.getElementById("estatus").innerHTML = "An unexpected error has occurred."
     load.setAttribute("hidden", true);
