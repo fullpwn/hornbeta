@@ -108,7 +108,7 @@ background-color: #595aff;
     }
 }
 input {
-border-radius: 5px;
+border-radius: 4px;
 border: none;
 }
 .avatar {
@@ -125,6 +125,7 @@ border: none;
 <p id="mailtxt">Email <input id="email" type="email"></p>
 <p>Password <input id="password" type="password"></p>
 <button id="signon" onclick="toot()">Sign in</button>
+<a onClick="signout()" hidden id="signout">Not you?</a>
 <p id="estatus"></p>
     <div class="indeterminate-progress-bar">
       <div class="indeterminate-progress-bar__progress" hidden id="loading"></div>
@@ -133,7 +134,7 @@ border: none;
 var emailinput = document.getElementById("email")
 var instanceinput = document.getElementById("instance")
 var buttonsignon = document.getElementById("signon")
-    
+    var signoff = document.getElementById("signout")
 var avatarpfp = document.getElementById("avatar")
 var insttext = document.getElementById("insttext")
 var mailtxt = document.getElementById("mailtxt")
@@ -143,6 +144,7 @@ var mailtxt = document.getElementById("mailtxt")
     emailinput.setAttribute("hidden", true);
     instanceinput.setAttribute("hidden", true);
     insttext.setAttribute("hidden", true);
+    signoff.removeAttribute("hidden");
     mailtxt.setAttribute("hidden", true);
     buttonsignon.setAttribute("onClick", "userlogin()");
     var instancequick = getCookie("instance")
@@ -229,8 +231,8 @@ window.location.replace("home?inst=" + instancequick + "&token=" + data.access_t
 document.getElementById("estatus").innerHTML = "An unexpected error has occurred."
     load.setAttribute("hidden", true);
 }
-} else if (response.status === 401) {
-document.getElementById("estatus").innerHTML = "Email or password is incorrect."
+} else if (response.status === 400) {
+    document.getElementById("estatus").innerHTML = "Password is incorrect."
     load.setAttribute("hidden", true);
 } else {
   }
@@ -240,5 +242,12 @@ document.getElementById("estatus").innerHTML = "Email or password is incorrect."
   document.getElementById("estatus").innerHTML = "Error connecting to your instance. Have you typed it correctly?"
     load.setAttribute("hidden", true);
 });;
+}
+function signout() {
+    document.cookie = "avatar="
+    document.cookie = "friendlyname="
+    document.cookie = "email="
+    document.cookie = "instance="
+    location.reload()
 }
 </script>
