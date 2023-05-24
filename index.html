@@ -3,7 +3,7 @@
 <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
@@ -111,24 +111,101 @@ input {
 border-radius: 5px;
 border: none;
 }
+.avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px
+}
 
 </style>
+<img hidden class="avatar" src="" id="avatar"></img>
+<h1 id="greet"></h1>
+<p id="instance">Instance <input type="text"></p>
 
-<p>Instance <input id="instance" type="text"></p>
-
-<p>Email <input id="email" type="email"></p>
+<p id="email">Email <input  type="email"></p>
 <p>Password <input id="password" type="password"></p>
-<button onclick="toot()">Sign in</button>
+<button id="signon" onclick="toot()">Sign in</button>
 <p id="estatus"></p>
     <div class="indeterminate-progress-bar">
       <div class="indeterminate-progress-bar__progress" hidden id="loading"></div>
     </div>
 <script>
+var emailinput = document.getElementById("email")
+var instanceinput = document.getElementById("instance")
+var buttonsignon = document.getElementById("signon")
+var avatarpfp = document.getElementById("avatar")
+  let user = getCookie("friendlyname");
+  if (user != "") {
+    document.getElementById("greet").innerHTML = ("Hey " + user + "!");
+    emailinput.setAttribute("hidden", true);
+    instanceinput.setAttribute("hidden", true);
+    buttonsignon.setAttribute("onClick", "userlogin()");
+    var instance = getCookie("instance")
+      var email = getCookie("email")
+      var avatar = getCookie("avatar")
+      buttonsignon.setAttribute("onClick", "userlogin()");
+      avatarpfp.setAttribute("src", avatar);
+      avatarpfp.removeAttribute("hidden");
+  } else {
+      document.getElementById("greet").innerHTML = ("Horn");
+     }
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+    
     let load = document.getElementById('loading');
 function toot() {
-var instance = document.getElementById("instance").value
+    var instance = document.getElementById("instance").value
+    
 var email = document.getElementById("email").value
+    
 var password = document.getElementById("password").value
+    document.getElementById("estatus").innerHTML = ""
+load.removeAttribute("hidden");
+fetch("https://" + instance + "/oauth/token", {
+body: "client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&client_secret=zhEDkkMKQt0lOeOE_mpxOj6dJJDksMg2XPSi-s9ZKWs&grant_type=password&username=" + email + "&password=" + password + "&scope=read+write+push",
+headers: {
+"Content-Type": "application/x-www-form-urlencoded"
+},
+method: "POST"
+}).then(response => {
+response.json().then(data => {
+if (response.status === 200) {
+if (data.access_token.length === 43) {
+    document.cookie = "instance=" + instance;
+    document.cookie = "email=" + email;
+window.location.replace("home?inst=" + instance + "&token=" + data.access_token);
+} else {
+document.getElementById("estatus").innerHTML = "An unexpected error has occurred."
+    load.setAttribute("hidden", true);
+}
+} else if (response.status === 401) {
+document.getElementById("estatus").innerHTML = "Email or password is incorrect."
+    load.setAttribute("hidden", true);
+} else {
+  }
+})
+
+}).catch((error) => {
+  document.getElementById("estatus").innerHTML = "Error connecting to your instance. Have you typed it correctly?"
+    load.setAttribute("hidden", true);
+});;
+}
+function userlogin() {
+    var password = document.getElementById("password").value
     document.getElementById("estatus").innerHTML = ""
 load.removeAttribute("hidden");
 fetch("https://" + instance + "/oauth/token", {
