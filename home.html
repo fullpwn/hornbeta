@@ -139,7 +139,7 @@ background-color: #595aff;
     let token = searchParams.get('token')
     let inst = searchParams.get('inst')
     load.removeAttribute("hidden");
-    //window.history.replaceState({}, document.title, window.location.pathname);
+    window.history.replaceState({}, document.title, window.location.pathname);
   
     fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
       headers: {
