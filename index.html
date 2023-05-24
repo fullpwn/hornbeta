@@ -1,3 +1,6 @@
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
@@ -25,9 +28,6 @@
       padding: 10px;
       margin-bottom: 10px;
     }
-    svg {
-    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(346deg) brightness(101%) contrast(104%);
-  }
     .favcount {
       display: flex;
 }
@@ -56,6 +56,51 @@ background-color: #595aff;
     white-space: nowrap;
     width: auto;
 }
+    .indeterminate-progress-bar {
+    /* Color */
+   
+
+    /* Rounded border */
+    border-radius: 9999px;
+    /* Size */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 0.5rem;
+    width: 50%;
+    z-index: 2;
+
+    position: relative;
+    overflow: hidden;
+}
+    .indeterminate-progress-bar__progress {
+    /* Color */
+    background-color: #595aff;
+
+    /* Rounded border */
+    border-radius: 9999px;
+
+    /* Absolute position */
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    width: 30%;
+    z-index: 2;
+
+    /* Move the bar infinitely */
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-name: indeterminate-progress-bar;
+}
+
+@keyframes indeterminate-progress-bar {
+    from {
+        left: -30%;
+    }
+    to {
+        left: 100%;
+    }
+}
 input {
 border-radius: 5px;
 border: none;
@@ -69,13 +114,17 @@ border: none;
 <p>Password <input id="password" type="password"></p>
 <button onclick="toot()">Sign in</button>
 <p id="estatus"></p>
-
+    <div class="indeterminate-progress-bar">
+      <div class="indeterminate-progress-bar__progress" hidden id="loading"></div>
+    </div>
 <script>
+    let load = document.getElementById('loading');
 function toot() {
 var instance = document.getElementById("instance").value
 var email = document.getElementById("email").value
 var password = document.getElementById("password").value
-document.getElementById("estatus").innerHTML = "Logging in.."
+    document.getElementById("estatus").innerHTML = ""
+load.removeAttribute("hidden");
 fetch("https://" + instance + "/oauth/token", {
 body: "client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&client_secret=zhEDkkMKQt0lOeOE_mpxOj6dJJDksMg2XPSi-s9ZKWs&grant_type=password&username=" + email + "&password=" + password + "&scope=read+write+push",
 headers: {
@@ -89,15 +138,18 @@ if (data.access_token.length === 43) {
 window.location.replace("home?inst=" + instance + "&token=" + data.access_token);
 } else {
 document.getElementById("estatus").innerHTML = "An unexpected error has occurred."
+    load.setAttribute("hidden", true);
 }
 } else if (response.status === 401) {
 document.getElementById("estatus").innerHTML = "Email or password is incorrect."
+    load.setAttribute("hidden", true);
 } else {
   }
 })
 
 }).catch((error) => {
   document.getElementById("estatus").innerHTML = "Error connecting to your instance. Have you typed it correctly?"
+    load.setAttribute("hidden", true);
 });;
 }
 </script>
