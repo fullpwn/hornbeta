@@ -125,9 +125,13 @@ border: none;
 <p id="insttext">Instance <input  id="instance" type="text"></p>
 
 <p id="mailtxt">Email <input id="email" type="email"></p>
-<p>Password <input id="password" type="password"></p>
+<p id="pwdtxt">Password <input id="password" type="password"></p>
+<p id="authtxt" hidden>Authorization Token <input id="tokenauth" type="password" hidden></p>
 <button id="signon" onclick="toot()">Sign in</button>
 <a onClick="signout()" hidden id="signout">Not you?</a>
+<br>
+<br>
+<a id="prompt2fa" onClick="ihave2fa()">Click here if you have 2FA</a>
 <p id="estatus"></p>
     <div class="indeterminate-progress-bar">
       <div class="indeterminate-progress-bar__progress" hidden id="loading"></div>
@@ -140,6 +144,12 @@ var buttonsignon = document.getElementById("signon")
 var avatarpfp = document.getElementById("avatar")
 var insttext = document.getElementById("insttext")
 var mailtxt = document.getElementById("mailtxt")
+var pwdtxt = document.getElementById("pwdtxt")
+var password = document.getElementById("password")
+  var tokenauth = document.getElementById("tokenauth")
+var authtxt = document.getElementById("authtxt")
+var prompt2fa = document.getElementById("prompt2fa")
+
   let user = getCookie("friendlyname");
   if (user != "") {
     document.getElementById("greet").innerHTML = ("Hey " + user + "!");
@@ -252,4 +262,56 @@ function signout() {
     document.cookie = "instance="
     location.reload()
 }
+
+  function ihave2fa() {    
+    emailinput.setAttribute("hidden", true);
+    mailtxt.setAttribute("hidden", true);
+        password.setAttribute("hidden", true);
+    pwdtxt.setAttribute("hidden", true);
+    prompt2fa.setAttribute("hidden", true);
+    buttonsignon.setAttribute("onClick", "open2faprompt()");
+    document.getElementById("signon").innerHTML = "Open"
+}
+  function open2faprompt() {
+    window.open("https://" + document.getElementById("instance").value + "/oauth/authorize?client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code", '_blank').focus();
+    tokenauth.removeAttribute("hidden");
+    authtxt.removeAttribute("hidden");
+        buttonsignon.setAttribute("onClick", "authtokensignin()");
+    document.getElementById("signon").innerHTML = "Sign in"
+      insttext.setAttribute("hidden", true);
+    instanceinput.setAttribute("hidden", true);
+  }
+  function authtokensignin() {
+    load.removeAttribute("hidden");
+    fetch("https://mstdn.social/oauth/token", {
+body: "client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&client_secret=zhEDkkMKQt0lOeOE_mpxOj6dJJDksMg2XPSi-s9ZKWs&grant_type=authorization_code&code=" + document.getElementById("tokenauth").value + "&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob",
+headers: {
+"Content-Type": "application/x-www-form-urlencoded"
+},
+method: "POST"
+}).then(response => {
+response.json().then(data => {
+console.log(data)
+if (response.status === 200) {
+if (data.access_token.length === 43) {
+    document.cookie = "instance=" + instanceinput.value;
+    document.cookie = "auth2fatoken=" + data.access_token;
+    document.cookie = "isusing2fa=1"
+    location.replace("home?inst=" + instanceinput.value + "&token=" + data.access_token);
+} else {
+document.getElementById("estatus").innerHTML = "An unexpected error has occurred."
+    load.setAttribute("hidden", true);
+}
+} else if (response.status === 401) {
+document.getElementById("estatus").innerHTML = "Email or password is incorrect."
+    load.setAttribute("hidden", true);
+} else {
+  }
+})
+
+}).catch((error) => {
+    document.getElementById("estatus").innerHTML = "Error connecting to your instance. Have you typed it correctly?"
+    load.setAttribute("hidden", true);
+});;
+  }
 </script>
