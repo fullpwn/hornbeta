@@ -216,23 +216,7 @@ background-color: #595aff;
             statusDiv.appendChild(favDiv)
           statusesDiv.appendChild(statusDiv)
           load.setAttribute("hidden", true);
-            let logincounter = getCookie("logincounter");
-  if (logincounter == "99") {
-      console.log("Theres a little present on this page!")
-      document.getElementById("caughtup").innerHTML = "All caught up!"
-      let confetti = new Confetti('caughtup');
-
-    // Edit given parameters
-    confetti.setCount(75);
-    confetti.setSize(1);
-    confetti.setPower(25);
-    confetti.setFade(false);
-    confetti.destroyTarget(false);
-      document.cookie = "logincounter=" + ++logincounter;
-  } else {
-      document.getElementById("caughtup").innerHTML = "All caught up!"
-      document.cookie = "logincounter=" + ++logincounter;
-     }
+          document.getElementById("caughtup").innerHTML = "All caught up!"
           
         }
       })
@@ -282,7 +266,22 @@ background-color: #595aff;
           load.setAttribute("hidden", true);
         }
       })
-}
+}            let logincounter = getCookie("logincounter");
+  if (logincounter == "99") {
+      console.log("Theres a little present on this page!")
+      let confetti = new Confetti('caughtup');
+
+    // Edit given parameters
+    confetti.setCount(75);
+    confetti.setSize(1);
+    confetti.setPower(25);
+    confetti.setFade(false);
+    confetti.destroyTarget(false);
+      document.cookie = "logincounter=" + ++logincounter;
+  } else {
+      
+      document.cookie = "logincounter=" + ++logincounter;
+     }
     </script>
 </body>
 </html>
