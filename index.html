@@ -149,20 +149,41 @@ var password = document.getElementById("password")
   var tokenauth = document.getElementById("tokenauth")
 var authtxt = document.getElementById("authtxt")
 var prompt2fa = document.getElementById("prompt2fa")
-
+  let pwdlogin = getCookie("ispwdlogin")
+  let isusing2falogin = getCookie("isusing2fa")
   let user = getCookie("friendlyname");
-  if (user != "") {
+  if (pwdlogin == "1") {
     document.getElementById("greet").innerHTML = ("Hey " + user + "!");
     emailinput.setAttribute("hidden", true);
     instanceinput.setAttribute("hidden", true);
     insttext.setAttribute("hidden", true);
     signoff.removeAttribute("hidden");
     mailtxt.setAttribute("hidden", true);
+    prompt2fa.setAttribute("hidden", true);
     buttonsignon.setAttribute("onClick", "userlogin()");
     var instancequick = getCookie("instance")
       var emailquick = getCookie("email")
       var avatarquick = getCookie("avatar")
-      buttonsignon.setAttribute("onClick", "userlogin()");
+      avatarpfp.setAttribute("src", avatarquick);
+      
+      avatarpfp.removeAttribute("hidden");
+  } else {
+      document.getElementById("greet").innerHTML = ("Horn");
+     }
+    if (isusing2falogin == "1") {
+    document.getElementById("greet").innerHTML = ("Hey " + user + "!");
+    emailinput.setAttribute("hidden", true);
+    instanceinput.setAttribute("hidden", true);
+    insttext.setAttribute("hidden", true);
+    signoff.removeAttribute("hidden");
+    prompt2fa.setAttribute("hidden", true);
+    mailtxt.setAttribute("hidden", true);
+    password.setAttribute("hidden", true);
+    pwdtxt.setAttribute("hidden", true);
+    buttonsignon.setAttribute("onClick", "returning2falogin()");
+    var instancequick = getCookie("instance")
+      var emailquick = getCookie("email")
+      var avatarquick = getCookie("avatar")
       avatarpfp.setAttribute("src", avatarquick);
       
       avatarpfp.removeAttribute("hidden");
@@ -259,7 +280,9 @@ function signout() {
     document.cookie = "avatar="
     document.cookie = "friendlyname="
     document.cookie = "email="
-    document.cookie = "instance="
+    document.cookie = "instance=" 
+    document.cookie = "isusing2fa=" 
+    document.cookie = "ispwdlogin="
     location.reload()
 }
 
@@ -310,8 +333,11 @@ document.getElementById("estatus").innerHTML = "Email or password is incorrect."
 })
 
 }).catch((error) => {
-    document.getElementById("estatus").innerHTML = "Error connecting to your instance. Have you typed it correctly?"
+  document.getElementById("estatus").innerHTML = "Error connecting to your instance. Have you typed it correctly?"
     load.setAttribute("hidden", true);
 });;
+  }
+  function returning2falogin() {
+    location.replace("home?inst=" + getCookie("instance") + "&token=" + getCookie("auth2fatoken"));
   }
 </script>
