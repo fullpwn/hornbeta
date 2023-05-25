@@ -172,6 +172,21 @@ background-color: #595aff;
         document.cookie = "avatar=" + data.avatar;
         document.cookie = "friendlyname=" + data.display_name;
       document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!"
+      let logincounter = getCookie("logincounter");
+  if (logincounter == "99") {
+      console.log("Theres a little present on this page!")
+      let confetti = new Confetti('caughtup');
+
+    // Edit given parameters
+    confetti.setCount(75);
+    confetti.setSize(1);
+    confetti.setPower(25);
+    confetti.setFade(false);
+    confetti.destroyTarget(false);
+      document.cookie = "logincounter=" + ++logincounter;
+  } else {
+    document.cookie = "logincounter=" + ++logincounter;
+  }
     }).catch((error) => {
     location.replace("/")
       })
@@ -266,22 +281,7 @@ background-color: #595aff;
           load.setAttribute("hidden", true);
         }
       })
-}            let logincounter = getCookie("logincounter");
-  if (logincounter == "99") {
-      console.log("Theres a little present on this page!")
-      let confetti = new Confetti('caughtup');
-
-    // Edit given parameters
-    confetti.setCount(75);
-    confetti.setSize(1);
-    confetti.setPower(25);
-    confetti.setFade(false);
-    confetti.destroyTarget(false);
-      document.cookie = "logincounter=" + ++logincounter;
-  } else {
-      
-      document.cookie = "logincounter=" + ++logincounter;
-     }
+}    
     </script>
 </body>
 </html>
