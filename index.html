@@ -121,7 +121,7 @@ border: none;
 
 </style>
 <img hidden class="avatar" src="" id="avatar"></img>
-<h1 id="greet"></h1>
+<h1 id="greet">Horn</h1>
 <p id="insttext">Instance <input  id="instance" type="text"></p>
 
 <p id="mailtxt">Email <input id="email" type="email"></p>
@@ -151,9 +151,10 @@ var authtxt = document.getElementById("authtxt")
 var prompt2fa = document.getElementById("prompt2fa")
   let pwdlogin = getCookie("ispwdlogin")
   let isusing2falogin = getCookie("isusing2fa")
-  let user = getCookie("friendlyname");
+    let user = getCookie("friendlyname");
+  
   if (pwdlogin == "1") {
-    document.getElementById("greet").innerHTML = ("Hey " + user + "!");
+     document.getElementById("greet").innerHTML = ("Hey " + user + "!");    
     emailinput.setAttribute("hidden", true);
     instanceinput.setAttribute("hidden", true);
     insttext.setAttribute("hidden", true);
@@ -168,7 +169,7 @@ var prompt2fa = document.getElementById("prompt2fa")
       
       avatarpfp.removeAttribute("hidden");
   } else {
-      document.getElementById("greet").innerHTML = ("Horn");
+    
      }
     if (isusing2falogin == "1") {
     document.getElementById("greet").innerHTML = ("Hey " + user + "!");
@@ -188,7 +189,6 @@ var prompt2fa = document.getElementById("prompt2fa")
       
       avatarpfp.removeAttribute("hidden");
   } else {
-      document.getElementById("greet").innerHTML = ("Horn");
      }
 
 function getCookie(cname) {
@@ -228,6 +228,7 @@ if (response.status === 200) {
 if (data.access_token.length === 43) {
     document.cookie = "instance=" + instance;
     document.cookie = "email=" + email;
+    document.cookie = "ispwdlogin=1"
     location.replace("home?inst=" + instance + "&token=" + data.access_token);
 } else {
 document.getElementById("estatus").innerHTML = "An unexpected error has occurred."
