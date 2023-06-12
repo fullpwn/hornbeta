@@ -152,6 +152,8 @@ var prompt2fa = document.getElementById("prompt2fa")
   let pwdlogin = getCookie("ispwdlogin")
   let isusing2falogin = getCookie("isusing2fa")
     let user = getCookie("friendlyname");
+  var auth2faclientid
+  var auth2faclientsecret
   
   if (pwdlogin == "1") {
      document.getElementById("greet").innerHTML = ("Hey " + user + "!");    
@@ -295,20 +297,35 @@ function signout() {
     prompt2fa.setAttribute("hidden", true);
     buttonsignon.setAttribute("onClick", "open2faprompt()");
     document.getElementById("signon").innerHTML = "Open"
-}
+  }
   function open2faprompt() {
-    window.open("https://" + document.getElementById("instance").value + "/oauth/authorize?client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code", '_blank').focus();
+    load.removeAttribute("hidden");
+    fetch("https://" + document.getElementById("instance").value + "/api/v1/apps?client_name=Horn&redirect_uris=urn:ietf:wg:oauth:2.0:oob&scopes=read+write+push", {
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  method: "POST"
+})
+.then(response => {
+  response.json().then(data => {
+    console.log(data)
+    auth2faclientid = data.client_id
+    auth2faclientsecret = data.client_secret
+        window.open("https://" + document.getElementById("instance").value + "/oauth/authorize?client_id=" + data.client_id + "&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code", '_blank').focus();
     tokenauth.removeAttribute("hidden");
     authtxt.removeAttribute("hidden");
         buttonsignon.setAttribute("onClick", "authtokensignin()");
     document.getElementById("signon").innerHTML = "Sign in"
       insttext.setAttribute("hidden", true);
     instanceinput.setAttribute("hidden", true);
+    load.setAttribute("hidden", true);
+  })
+})
   }
   function authtokensignin() {
     load.removeAttribute("hidden");
-    fetch("https://mstdn.social/oauth/token", {
-body: "client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&client_secret=zhEDkkMKQt0lOeOE_mpxOj6dJJDksMg2XPSi-s9ZKWs&grant_type=authorization_code&code=" + document.getElementById("tokenauth").value + "&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob",
+    fetch("https://" + document.getElementById("instance").value + "/oauth/token", {
+body: "client_id=" + auth2faclientid + "&client_secret=" + auth2faclientsecret + "&grant_type=authorization_code&code=" + document.getElementById("tokenauth").value + "&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob",
 headers: {
 "Content-Type": "application/x-www-form-urlencoded"
 },
@@ -327,7 +344,7 @@ document.getElementById("estatus").innerHTML = "An unexpected error has occurred
     load.setAttribute("hidden", true);
 }
 } else if (response.status === 401) {
-document.getElementById("estatus").innerHTML = "Email or password is incorrect."
+document.getElementById("estatus").innerHTML = "The server has denied access."
     load.setAttribute("hidden", true);
 } else {
   }
