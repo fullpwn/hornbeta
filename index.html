@@ -122,16 +122,17 @@ border: none;
 </style>
 <img hidden class="avatar" src="" id="avatar"></img>
 <h1 id="greet">Horn</h1>
-<p id="insttext">Instance <input  id="instance" type="text"></p>
-
-<p id="mailtxt">Email <input id="email" type="email"></p>
-<p id="pwdtxt">Password <input id="password" type="password"></p>
+<p><i>Simple login has been disabled. Please use Advanced.</i></p>
+<p id="insttext" hidden>Instance <input  id="instance" type="text"></p>
+<p id="mailtxt" hidden>Email <input id="email" type="email"></p>
+<p id="pwdtxt" hidden>Password <input id="password" type="password"></p>
 <p id="authtxt" hidden>Authorization Token <input id="tokenauth" type="password" hidden></p>
 <button id="signon" onclick="toot()">Sign in</button>
 <a onClick="signout()" hidden id="signout">Not you?</a>
+
 <br>
 <br>
-<a id="prompt2fa" onClick="ihave2fa()">Click here if you have 2FA</a>
+<a id="prompt2fa" onClick="ihave2fa()">Advanced</a>
 <p id="estatus"></p>
     <div class="indeterminate-progress-bar">
       <div class="indeterminate-progress-bar__progress" hidden id="loading"></div>
@@ -152,8 +153,8 @@ var prompt2fa = document.getElementById("prompt2fa")
   let pwdlogin = getCookie("ispwdlogin")
   let isusing2falogin = getCookie("isusing2fa")
     let user = getCookie("friendlyname");
-  var auth2faclientid
-  var auth2faclientsecret
+  var authclientid
+  var authclientsecret
   
   if (pwdlogin == "1") {
      document.getElementById("greet").innerHTML = ("Hey " + user + "!");    
@@ -168,6 +169,7 @@ var prompt2fa = document.getElementById("prompt2fa")
       var emailquick = getCookie("email")
       var avatarquick = getCookie("avatar")
       avatarpfp.setAttribute("src", avatarquick);
+    
       
       avatarpfp.removeAttribute("hidden");
   } else {
@@ -188,7 +190,6 @@ var prompt2fa = document.getElementById("prompt2fa")
       var emailquick = getCookie("email")
       var avatarquick = getCookie("avatar")
       avatarpfp.setAttribute("src", avatarquick);
-      
       avatarpfp.removeAttribute("hidden");
   } else {
      }
@@ -218,8 +219,21 @@ var email = document.getElementById("email").value
 var password = document.getElementById("password").value
     document.getElementById("estatus").innerHTML = ""
 load.removeAttribute("hidden");
-fetch("https://" + instance + "/oauth/token", {
-body: "client_id=bKbzHX2Hj1o0tx_EbsNZ8laBxEVdxt3o-O_yIIzcgTc&client_secret=zhEDkkMKQt0lOeOE_mpxOj6dJJDksMg2XPSi-s9ZKWs&grant_type=password&username=" + email + "&password=" + password + "&scope=read+write+push",
+
+  
+    fetch("https://" + document.getElementById("instance").value + "/api/v1/apps?client_name=Horn&redirect_uris=urn:ietf:wg:oauth:2.0:oob&scopes=read+write+push", {
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  method: "POST"
+})
+.then(response => {
+  response.json().then(data => {
+    console.log(data)
+    authclientid = data.client_id
+    authclientsecret = data.client_secret
+    fetch("https://" + instance + "/oauth/token", {
+body: "client_id=" + authclientid + "&client_secret=" + authclientsecret + "&grant_type=password&username=" + email + "&password=" + password + "&scope=read+write+push",
 headers: {
 "Content-Type": "application/x-www-form-urlencoded"
 },
@@ -247,6 +261,11 @@ document.getElementById("estatus").innerHTML = "Email or password is incorrect."
   document.getElementById("estatus").innerHTML = "Error connecting to your instance. Have you typed it correctly?"
     load.setAttribute("hidden", true);
 });;
+  })
+})
+
+  
+
 }
 function userlogin() {
     var password = document.getElementById("password").value
@@ -297,6 +316,8 @@ function signout() {
     prompt2fa.setAttribute("hidden", true);
     buttonsignon.setAttribute("onClick", "open2faprompt()");
     document.getElementById("signon").innerHTML = "Open"
+    instanceinput.removeAttribute("hidden");
+    insttext.removeAttribute("hidden");
   }
   function open2faprompt() {
     load.removeAttribute("hidden");
@@ -309,8 +330,8 @@ function signout() {
 .then(response => {
   response.json().then(data => {
     console.log(data)
-    auth2faclientid = data.client_id
-    auth2faclientsecret = data.client_secret
+    authclientid = data.client_id
+    authclientsecret = data.client_secret
         window.open("https://" + document.getElementById("instance").value + "/oauth/authorize?client_id=" + data.client_id + "&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code", '_blank').focus();
     tokenauth.removeAttribute("hidden");
     authtxt.removeAttribute("hidden");
@@ -325,7 +346,7 @@ function signout() {
   function authtokensignin() {
     load.removeAttribute("hidden");
     fetch("https://" + document.getElementById("instance").value + "/oauth/token", {
-body: "client_id=" + auth2faclientid + "&client_secret=" + auth2faclientsecret + "&grant_type=authorization_code&code=" + document.getElementById("tokenauth").value + "&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob",
+body: "client_id=" + authclientid + "&client_secret=" + authclientsecret + "&grant_type=authorization_code&code=" + document.getElementById("tokenauth").value + "&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob",
 headers: {
 "Content-Type": "application/x-www-form-urlencoded"
 },
