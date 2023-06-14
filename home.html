@@ -158,7 +158,7 @@ background-color: #595aff;
     let inst = searchParams.get('inst')
     load.removeAttribute("hidden");
     window.history.replaceState({}, document.title, window.location.pathname);
-  
+    console.log("%cCONNECT", "color: white; background-color: #0373fc;", "Request user information");
     fetch("https://" + inst + "/api/v1/accounts/verify_credentials", {
       headers: {
         Authorization: "Bearer " + token,
@@ -169,7 +169,7 @@ background-color: #595aff;
     .then(response => response.json())
     .then(data => {
       console.log(data)
-        
+        console.log("%cSET", "color: white; background-color: #fc03be;", "User information for quick sign in");
         document.cookie = "avatar=" + data.avatar;
         document.cookie = "friendlyname=" + data.display_name;
       document.getElementById("greet").innerHTML = "Welcome " + data.display_name + "!"
@@ -191,6 +191,7 @@ background-color: #595aff;
     }).catch((error) => {
     location.replace("/")
       })
+    console.log("%cCONNECT", "color: white; background-color: #0373fc;", "Request timeline");
     fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
       headers: {
         Authorization: "Bearer " + token,
@@ -201,6 +202,7 @@ background-color: #595aff;
     .then(response => response.json())
     .then(data => {
       console.log(data)
+      console.log("%cPASS", "color: black; background-color: #22ff00;", "Received timeline");
       document.getElementById("statuses").innerHTML = ""
       let statusesDiv = document.getElementById("statuses")
       for (let i = 0; i < 39 && i < data.length; i++) {
@@ -239,6 +241,7 @@ background-color: #595aff;
         
    function toot() {
     load.removeAttribute("hidden");
+     console.log("%cCONNECT", "color: white; background-color: #0373fc;", "Request timeline");
     fetch("https://" + inst + "/api/v1/timelines/home?limit=40", {
       headers: {
         Authorization: "Bearer " + token,
@@ -249,6 +252,7 @@ background-color: #595aff;
     .then(response => response.json())
     .then(data => {
       console.log(data)
+       console.log("%cPASS", "color: black; background-color: #22ff00;", "Received timeline");
       document.getElementById("statuses").innerHTML = ""
       let statusesDiv = document.getElementById("statuses")
       for (let i = 0; i < 39 && i < data.length; i++) {
