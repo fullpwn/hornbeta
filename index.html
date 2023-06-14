@@ -1,3 +1,4 @@
+<!-- Hi! Thank you for checking out my code. It's not that good as this is only supposed to be a functioning program. Not an optimized one. But feel free to add some touch ups if you like! -->
 <link rel="manifest" href="/app.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Horn">
@@ -118,44 +119,63 @@ border: none;
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.4) 0px 30px 90px;
 }
-
+.announcementbeta {
+  left: 0;
+  right: 0;
+  position: absolute;
+  opacity: 25%;
+  bottom: 5%;
+}
+.noselect {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 </style>
 <img hidden class="avatar" src="" id="avatar"></img>
-<h1 id="greet">Horn</h1>
-<p><i>Simple login has been disabled. Please use Advanced.</i></p>
+<h1 id="greet" class="noselect">Horn</h1>
 <p id="insttext" hidden>Instance <input  id="instance" type="text"></p>
 <p id="mailtxt" hidden>Email <input id="email" type="email"></p>
 <p id="pwdtxt" hidden>Password <input id="password" type="password"></p>
 <p id="authtxt" hidden>Authorization Token <input id="tokenauth" type="password" hidden></p>
 <button id="signon" onclick="toot()">Sign in</button>
 <a onClick="signout()" hidden id="signout">Not you?</a>
-
 <br>
 <br>
 <a id="prompt2fa" onClick="ihave2fa()">Advanced</a>
-<p id="estatus"></p>
     <div class="indeterminate-progress-bar">
       <div class="indeterminate-progress-bar__progress" hidden id="loading"></div>
     </div>
+<i><p id="announcementmsg" class="announcementbeta noselect"></p></i>
+<p id="estatus"></p>
+
 <script>
-var emailinput = document.getElementById("email")
-var instanceinput = document.getElementById("instance")
-var buttonsignon = document.getElementById("signon")
-    var signoff = document.getElementById("signout")
-var avatarpfp = document.getElementById("avatar")
-var insttext = document.getElementById("insttext")
-var mailtxt = document.getElementById("mailtxt")
-var pwdtxt = document.getElementById("pwdtxt")
-var password = document.getElementById("password")
+  // Set elements and settings
+  var emailinput = document.getElementById("email")
+  var instanceinput = document.getElementById("instance")
+  var buttonsignon = document.getElementById("signon")
+  var signoff = document.getElementById("signout")
+  var avatarpfp = document.getElementById("avatar")
+  var insttext = document.getElementById("insttext")
+  var mailtxt = document.getElementById("mailtxt")
+  var pwdtxt = document.getElementById("pwdtxt")
+  var password = document.getElementById("password")
   var tokenauth = document.getElementById("tokenauth")
-var authtxt = document.getElementById("authtxt")
-var prompt2fa = document.getElementById("prompt2fa")
+  var authtxt = document.getElementById("authtxt")
+  var prompt2fa = document.getElementById("prompt2fa")
   let pwdlogin = getCookie("ispwdlogin")
   let isusing2falogin = getCookie("isusing2fa")
-    let user = getCookie("friendlyname");
+  let user = getCookie("friendlyname");
   var authclientid
   var authclientsecret
-  
+  // Open auth option automatically.
+  ihave2fa()
+  // Check if you are on the beta website. If so, display a warning.
+  if (window.location.host === "beta.horn.fullpwn.net") {
+    document.getElementById("announcementmsg").innerHTML = "You're on the beta channel. Features and elements are subject to change."
+    document.getElementById("greet").innerHTML = "Horn Beta"
+  }
+  // Check if you have logged in before.
   if (pwdlogin == "1") {
      document.getElementById("greet").innerHTML = ("Hey " + user + "!");    
     emailinput.setAttribute("hidden", true);
@@ -193,7 +213,7 @@ var prompt2fa = document.getElementById("prompt2fa")
       avatarpfp.removeAttribute("hidden");
   } else {
      }
-
+// Cookie function
 function getCookie(cname) {
   let name = cname + "=";
   let decodedCookie = decodeURIComponent(document.cookie);
@@ -211,6 +231,7 @@ function getCookie(cname) {
 }
     
     let load = document.getElementById('loading');
+  // Currently unused. 
 function toot() {
 let instance = document.getElementById("instance").value;
     
@@ -267,6 +288,7 @@ document.getElementById("estatus").innerHTML = "Email or password is incorrect."
   
 
 }
+  // More unused stuff.
 function userlogin() {
     var password = document.getElementById("password").value
     document.getElementById("estatus").innerHTML = ""
@@ -298,6 +320,7 @@ document.getElementById("estatus").innerHTML = "An unexpected error has occurred
     load.setAttribute("hidden", true);
 });;
 }
+  // Signs you out.
 function signout() {
     document.cookie = "avatar="
     document.cookie = "friendlyname="
@@ -307,7 +330,7 @@ function signout() {
     document.cookie = "ispwdlogin="
     location.reload()
 }
-
+  // This opens a prompt for you to enter your instance
   function ihave2fa() {    
     emailinput.setAttribute("hidden", true);
     mailtxt.setAttribute("hidden", true);
@@ -319,7 +342,9 @@ function signout() {
     instanceinput.removeAttribute("hidden");
     insttext.removeAttribute("hidden");
   }
+  // Connects to the instance and then opens a new tab for you to authorize the application.
   function open2faprompt() {
+    console.log("%cCONNECT", "color: white; background-color: #0373fc;", "Request tokens for authorization");
     load.removeAttribute("hidden");
     fetch("https://" + document.getElementById("instance").value + "/api/v1/apps?client_name=Horn&redirect_uris=urn:ietf:wg:oauth:2.0:oob&scopes=read+write+push", {
   headers: {
@@ -329,7 +354,9 @@ function signout() {
 })
 .then(response => {
   response.json().then(data => {
+    
     console.log(data)
+    console.log("%cPASS", "color: black; background-color: #22ff00;", "Received data");
     authclientid = data.client_id
     authclientsecret = data.client_secret
         window.open("https://" + document.getElementById("instance").value + "/oauth/authorize?client_id=" + data.client_id + "&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code", '_blank').focus();
@@ -343,7 +370,9 @@ function signout() {
   })
 })
   }
+    // Grabs the user tokens from the authorization code provided.
   function authtokensignin() {
+    console.log("%cCONNECT", "color: white; background-color: #0373fc;", "Request user tokens from authorization code provided");
     load.removeAttribute("hidden");
     fetch("https://" + document.getElementById("instance").value + "/oauth/token", {
 body: "client_id=" + authclientid + "&client_secret=" + authclientsecret + "&grant_type=authorization_code&code=" + document.getElementById("tokenauth").value + "&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob",
@@ -359,6 +388,7 @@ if (data.access_token.length === 43) {
     document.cookie = "instance=" + instanceinput.value;
     document.cookie = "auth2fatoken=" + data.access_token;
     document.cookie = "isusing2fa=1"
+    console.log("%cPASS", "color: black; background-color: #22ff00;", "Validated data. Logging in");
     location.replace("home?inst=" + instanceinput.value + "&token=" + data.access_token);
 } else {
 document.getElementById("estatus").innerHTML = "An unexpected error has occurred."
@@ -376,6 +406,7 @@ document.getElementById("estatus").innerHTML = "The server has denied access."
     load.setAttribute("hidden", true);
 });;
   }
+  // Returning user login.
   function returning2falogin() {
     location.replace("home?inst=" + getCookie("instance") + "&token=" + getCookie("auth2fatoken"));
   }
